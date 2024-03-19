@@ -1,5 +1,5 @@
 # IoTproject
 
-bash'''
+'''
 int a
 '''
