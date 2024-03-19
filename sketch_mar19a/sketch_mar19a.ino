@@ -18,8 +18,8 @@
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-char ssid[] = "IoT_network";
-char pass[] = "IoTpassnetwork";
+char ssid[] = "w/e";
+char pass[] = "dMcXH43q";
 
 BlynkTimer timer;
 
