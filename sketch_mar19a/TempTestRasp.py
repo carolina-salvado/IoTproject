@@ -1,4 +1,5 @@
 import Adafruit_DHT
+import time 
 sensor = Adafruit_DHT.DHT22
 pin = 26
 
@@ -8,3 +9,4 @@ while True:
 		print("Temp = {0:0.1f}*C Humidity = {1:0.1f}/".format(temperature, humidity))
 	else :
 		print("Sensor failure")
+	time.sleep(1800) #wait 1800 sec (30 min) before next measurement 
