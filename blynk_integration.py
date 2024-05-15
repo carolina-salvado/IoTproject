@@ -12,7 +12,15 @@ ECHO = 4
 GPIO.setup(TRIG, GPIO.OUT)
 GPIO.setup(ECHO, GPIO.IN)
 GPIO.output(TRIG, False)
+distance = 0
 
+#led setup
+green_pin = 27
+red_pin = 22
+GPIO.setup(green_pin, GPIO.OUT)
+GPIO.setup(red_pin, GPIO.OUT)
+GPIO.output(green_pin, False)
+GPIO.output(red_pin, False)
 
 BLYNK_AUTH = "OS5uWHlVwpyopOvxfaDn2QVb5d14WGEh"
 blynk = BlynkLib.Blynk(BLYNK_AUTH,server='lon1.blynk.cloud')
@@ -30,6 +38,7 @@ def temp_sensor():
 		print(temperature, humidity)
 
 def distance_sensor():
+	global distance
 	GPIO.output(TRIG,True)
 	time.sleep(0.00001)
 	GPIO.output(TRIG,False)
@@ -40,17 +49,24 @@ def distance_sensor():
 	pulse_duration = pulse_end - pulse_start
 	distance = pulse_duration * 17150
 	distance = round(distance, 2)
-	if distance > 220:
-		blynk.virtual_write(3, 0)
+	if distance < 40:
+		GPIO.output(green_pin, False)
+		GPIO.output(red_pin, True)
 	else:
-		blynk.virtual_write(3, distance)
+		GPIO.output(green_pin, True)
+		GPIO.output(red_pin, False)
+
+def distance_send():
+	global distance
+	blynk.virtual_write(3,distance)
 
 @blynk.VIRTUAL_WRITE(1)
 def write_virtual_pin_handler(value):
 	print(value)
 
 timer.set_interval(10,temp_sensor)
-timer.set_interval(2, distance_sensor)
+timer.set_interval(0.2, distance_sensor)
+timer.set_interval(2, distance_send)
 time.sleep(2)
 while True:
 	blynk.run()
