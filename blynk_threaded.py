@@ -5,6 +5,7 @@ from BlynkTimer import BlynkTimer
 import Adafruit_DHT
 import RPi.GPIO as GPIO
 import requests
+import threading
 
 GPIO.setmode(GPIO.BCM)
 TRIG = 17
@@ -51,7 +52,6 @@ def distance_sensor():
     pulse_duration = pulse_end - pulse_start
     distance = pulse_duration * 17150
     distance = round(distance, 2)
-    print(distance)
     if distance < 40:
         distance_latency = distance / 80
         GPIO.output(green_pin, False)
@@ -71,9 +71,11 @@ def distance_send():
         http_send(3, 0)
 
 timer.set_interval(10, temp_sensor)
-timer.set_interval(0.2, distance_sensor)
 timer.set_interval(2, distance_send)
 time.sleep(2)
 while True:
+    thread = threading.Thread(target=distance_sensor)
+    thread.start()
     blynk.run()
     timer.run()
+    time.sleep(0.1)
